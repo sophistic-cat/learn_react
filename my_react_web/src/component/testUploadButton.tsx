@@ -1,7 +1,9 @@
 import React from 'react';
 import Excel from 'exceljs';
+import { Button } from '@material-ui/core';
 
 export default function UploadButton(props:{
+    label: string,
     accept?: string
 }){
     const upload = (files:any)=>{
@@ -34,7 +36,8 @@ export default function UploadButton(props:{
     }
     return(
         <React.Fragment>
-            <input type='file' accept={props.accept ?? '.xlsx, .xls'} onChange={upload} />
+            <input type='file' accept={props.accept ?? '.xlsx, .xls'} onChange={upload} disabled/>
+            <Button />
         </React.Fragment>
     )
 }
