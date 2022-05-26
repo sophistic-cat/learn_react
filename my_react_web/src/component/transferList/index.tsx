@@ -1,19 +1,19 @@
-import { Checkbox, Grid, List, ListItem, Paper } from "@material-ui/core";
-import { makeStyles } from "@material-ui/styles";
-import React, { useImperativeHandle, useState } from "react";
-import { Button } from "../button";
+import { Checkbox, Grid, List, ListItem, Paper } from '@material-ui/core';
+import { makeStyles } from '@material-ui/styles';
+import React, { useImperativeHandle, useState } from 'react';
+import { Button } from '../button';
 
 const useStyles = makeStyles({
-    buttonFormat: {
-        color: 'red', 
-        background: '#94BAF3'
-    },
-    paperFormat: {
-        width: '100%',
-        height: 230,
-        overflow: 'auto'
-    }
-})
+  buttonFormat: {
+    color: 'red',
+    background: '#94BAF3'
+  },
+  paperFormat: {
+    width: '100%',
+    height: 230,
+    overflow: 'auto'
+  }
+});
 
 export type transferListRef = {
 
@@ -31,120 +31,120 @@ export type transferListProps = {
 }
 
 const not = (a:Array<transferList>, b:Array<transferList>) => {
-    console.log('this is not');
-    return a.filter((value)=> b.indexOf(value) ===-1);
-}
+  console.log('this is not');
+  return a.filter((value) => b.indexOf(value) === -1);
+};
 
 const intersection = (a:Array<transferList>, b:Array<transferList>) => {
-    console.log('this is inter');
-    return a.filter((value)=> b.indexOf(value) !==-1);
-}
+  console.log('this is inter');
+  return a.filter((value) => b.indexOf(value) !== -1);
+};
 
 const testConsole = () => {
-    console.log('test...');
-}
+  console.log('test...');
+};
 
-export const TransferList = React.forwardRef<transferListRef, transferListProps>((props:transferListProps, ref:React.ForwardedRef<transferListRef>)=>{
-    const classes = useStyles();
-    const { leftList, rightList, ...others } = props;
+export const TransferList = React.forwardRef<transferListRef, transferListProps>((props:transferListProps, ref:React.ForwardedRef<transferListRef>) => {
+  const classes = useStyles();
+  const { leftList, rightList, ...others } = props;
 
-    const disabledList = rightList.reduce((pre, item, index)=>{
-        if(item.disabled === true){
-            pre.push({
-                label: item.label,
-                value: item.value,
-                disabled: item.disabled
-            })
-        }
-        return pre;
-    }, Array<transferList>());
+  const disabledList = rightList.reduce((pre, item, index) => {
+    if (item.disabled === true) {
+      pre.push({
+        label: item.label,
+        value: item.value,
+        disabled: item.disabled
+      });
+    }
+    return pre;
+  }, Array<transferList>());
 
-    const selectList = rightList.reduce((pre, item, index)=> {
-        if(item.disabled !== true){
-            pre.push({
-                label: item.label,
-                value: item.value,
-                disabled: item.disabled
-            })
-        }
-        return pre;
-    }, Array<transferList>());
+  const selectList = rightList.reduce((pre, item, index) => {
+    if (item.disabled !== true) {
+      pre.push({
+        label: item.label,
+        value: item.value,
+        disabled: item.disabled
+      });
+    }
+    return pre;
+  }, Array<transferList>());
 
-    const [checked,setChecked] = useState<Array<transferList>>([]);
-    const [leftMenu, setLeftMenu] = useState(leftList);
-    const [rightMenu, setRightMenu] = useState(disabledList.concat(selectList));
+  const [checked, setChecked] = useState<Array<transferList>>([]);
+  const [leftMenu, setLeftMenu] = useState(leftList);
+  const [rightMenu, setRightMenu] = useState(disabledList.concat(selectList));
 
-    const leftChecked = intersection(checked, leftMenu);
-    const rightChecked = intersection(checked, rightMenu);
+  const leftChecked = intersection(checked, leftMenu);
+  const rightChecked = intersection(checked, rightMenu);
 
-    const test = testConsole();
+  const test = testConsole();
 
-    const handleToggle = (value:transferList) => ()  => {
-        console.log('value:', value);
+  const handleToggle = (value:transferList) => () => {
+    console.log('value:', value);
 
-        const currentIndex = checked.indexOf(value);
-        const newChecked = [...checked];
-        if(currentIndex === -1){
-            newChecked.push(value);
-        }else{
-            newChecked.splice(currentIndex, 1);
-        }   
-
-        console.log('newChecked:', newChecked);
-        setChecked(newChecked);
+    const currentIndex = checked.indexOf(value);
+    const newChecked = [...checked];
+    if (currentIndex === -1) {
+      newChecked.push(value);
+    } else {
+      newChecked.splice(currentIndex, 1);
     }
 
-    const handleAllRight = () => {
-        setRightMenu(disabledList);
-        setLeftMenu(leftMenu.concat(selectList));
-        setChecked([]);
-    }
+    console.log('newChecked:', newChecked);
+    setChecked(newChecked);
+  };
 
-    const handleAllLeft = () => {
-        setLeftMenu([]);
-        setRightMenu(rightMenu.concat(leftMenu));
-        setChecked([]);
-    }
+  const handleAllRight = () => {
+    setRightMenu(disabledList);
+    setLeftMenu(leftMenu.concat(selectList));
+    setChecked([]);
+  };
 
-    const handleCheckedLeft = () => {
-        setRightMenu(rightMenu.concat(leftChecked));
-        setLeftMenu(not(leftMenu, leftChecked));
-        setChecked(not(checked, leftChecked));    
-    }
+  const handleAllLeft = () => {
+    setLeftMenu([]);
+    setRightMenu(rightMenu.concat(leftMenu));
+    setChecked([]);
+  };
 
-    const handleCheckedRight = () => {
-        setLeftMenu(leftMenu.concat(rightChecked));
-        setRightMenu(not(rightMenu, rightChecked));
-        setChecked(not(checked, rightChecked))
-    }
+  const handleCheckedLeft = () => {
+    setRightMenu(rightMenu.concat(leftChecked));
+    setLeftMenu(not(leftMenu, leftChecked));
+    setChecked(not(checked, leftChecked));
+  };
 
-    useImperativeHandle(ref, ()=>{
-        return{
+  const handleCheckedRight = () => {
+    setLeftMenu(leftMenu.concat(rightChecked));
+    setRightMenu(not(rightMenu, rightChecked));
+    setChecked(not(checked, rightChecked));
+  };
 
-        }
-    }, [ref])
+  useImperativeHandle(ref, () => {
+    return {
 
-    const customList = (items:Array<transferList>) => (
+    };
+  }, [ref]);
+
+  const customList = (items:Array<transferList>) => (
         <Paper className={classes.paperFormat}>
             <List role='list' >
-                {items.map((item, index)=>{
-                    return(
+                {items.map((item, index) => {
+                  return (
                         <ListItem
                             key={index}
                             button
                             disabled={item.disabled}
                             onClick={handleToggle(item)}
                             >
-                            <Checkbox key={index} checked={item.disabled ? true : checked.indexOf(item)!==-1} />
+                            <Checkbox key={index} checked={item.disabled ? true : checked.indexOf(item) !== -1} />
                             {item.label}
-                        </ListItem>   
-                    )
-            })}
+                        </ListItem>
+                  );
+                })}
             </List>
         </Paper>
-    )
+  );
 
-    return(
+  return (
         <>
             <Grid container>
                 <Grid item xs={12} sm={12} md={5} lg={5}>
@@ -161,5 +161,5 @@ export const TransferList = React.forwardRef<transferListRef, transferListProps>
                 </Grid>
             </Grid>
         </>
-    )
-})
+  );
+});
